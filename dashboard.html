@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ST6840 Dashboard</title>
+</head>
+<body>
+    <h1 style="text-align: center;">ST6840 rework Dashboard</h1>
+
+    <div style="display: flex; justify-content: space-around;">
+        <div>
+            <h2>VMI/Cosmetic:</h2>
+            <p>Pass: {{ vmi_cosmetic_counts['PASS'] }}</p>
+            <p>Fail: {{ vmi_cosmetic_counts['FAIL'] }}</p>
+            <p>Total: {{ vmi_cosmetic_total_qty }}</p>
+            <p>Pass %: {{ vmi_cosmetic_percent['PASS'] | default(0) | round(2) }}%</p>
+            <p>Fail %: {{ vmi_cosmetic_percent['FAIL'] | default(0) | round(2) }}%</p>
+        </div>
+
+        <div>
+            <h2>Wynik testu:</h2>
+            <p>Pass: {{ test_result_counts['PASS'] | default(0) }}</p>
+            <p>Fail: {{ test_result_counts['FAIL'] | default(0) }}</p>
+            <p>Total: {{ test_result_total_qty }}</p>
+            <p>Pass %: {{ test_result_percent['PASS'] | default(0) | round(2) }}%</p>
+            <p>Fail %: {{ test_result_percent['FAIL'] | default(0) | round(2) }}%</p>
+        </div>
+    </div>
+
+    <!-- Wykres kołowy dla VMI/Cosmetic -->
+    <div style="text-align: center;">
+        <div id="vmi-cosmetic-chart"></div>
+    </div>
+
+    <!-- Wykres kołowy dla Wyniku testu -->
+    <div style="text-align: center;">
+        <div id="test-result-chart"></div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var vmiCosmeticData = [{
+            labels: ['PASS', 'FAIL'],
+            values: [{{ vmi_cosmetic_counts['PASS'] | default(0) }}, {{ vmi_cosmetic_counts['FAIL'] | default(0) }}],
+            type: 'pie'
+        }];
+
+        var vmiCosmeticLayout = {
+            title: 'VMI/Cosmetic',
+        };
+
+        Plotly.newPlot('vmi-cosmetic-chart', vmiCosmeticData, vmiCosmeticLayout);
+
+        var testResultData = [{
+            labels: ['PASS', 'FAIL'],
+            values: [
+                {{ test_result_counts['PASS'] | default(0) }},
+                {{ test_result_counts['FAIL'] | default(0) }},
+            ],
+            type: 'pie'
+        }];
+
+        var testResultLayout = {
+            title: 'Wynik testu',
+        };
+
+        Plotly.newPlot('test-result-chart', testResultData, testResultLayout);
+    </script>
+</body>
+</html>
